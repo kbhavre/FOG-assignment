@@ -30,3 +30,9 @@ const port = process.env.PORT || 5001;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+// default route
+app.get("/", (req,res)=>{
+    res.send(`<p> This is default page of FOG Assignment </p>`);
+})
+
