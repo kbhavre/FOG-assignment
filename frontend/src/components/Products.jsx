@@ -185,9 +185,6 @@ function Products() {
         headers: {
           "Content-Type": "application/json",
         },
-        mode: "cors",
-        cache: "no-cache",
-        credentials: "include",
       });
   
       if (!response.ok) {
