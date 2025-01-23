@@ -176,8 +176,39 @@ function Products() {
   const [categoryFilter, setCategoryFilter] = useState("");
   const productsPerPage = showCount;
 
+  const getProductsFromBackend = async() =>{
+    try
+    {
+      const response = await fetch("http://localhost:3000/api/products/", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "include",
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log("Fetched product data:", data);
+      setProducts(data);
+
+    }catch(err)
+    {
+      console.log("Error in fetching product data : ", err);
+    }
+  }
+
+
+
   useEffect(() => {
-    setProducts(productsData);
+
+    getProductsFromBackend();
+    // setProducts(productsData);
     setLoading(false);
   }, []);
 
@@ -241,7 +272,7 @@ function Products() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {currentProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product?.title} product={product} />
           ))}
         </div>
 

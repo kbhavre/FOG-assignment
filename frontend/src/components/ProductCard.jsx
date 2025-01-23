@@ -11,7 +11,7 @@ const ProductCard = ({ product, onLike }) => {
   const [isLiked, setIsLiked] = useState(false);
 
   const truncateText = (text, limit) =>
-    text.length > limit ? text.substring(0, limit) + "..." : text;
+    text?.length > limit ? text.substring(0, limit) + "..." : text;
 
   const handleLike = () => {
     setIsLiked(!isLiked); // Toggle like state
@@ -65,9 +65,13 @@ const ProductCard = ({ product, onLike }) => {
       </motion.div>
 
       {/* "Discount" Badge */}
-      <div className="absolute z-10 right-0 top-0 h-12 w-12 rounded-full flex items-center justify-center bg-red-500 m-4">
+      {
+        product.discount && (
+          <div className="absolute z-10 right-0 top-0 h-12 w-12 rounded-full flex items-center justify-center bg-red-500 m-4">
         {product.discount}%
       </div>
+        )}
+      
 
       {/* Product Image */}
       <img
@@ -80,7 +84,7 @@ const ProductCard = ({ product, onLike }) => {
       <div className="px-2 flex flex-col gap-2">
         <h2 className="text-xl font-semibold">{product.title}</h2>
         <p className="text-gray-600 leading-none">
-          {truncateText(product.description, 100)}
+          {truncateText(product?.subtitle, 100)}
         </p>
         <div className="flex items-center gap-4 mb-6">
           <p className="font-bold text-lg">${product.price}</p>
