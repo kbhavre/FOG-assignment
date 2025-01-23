@@ -67,8 +67,15 @@ const ProductCard = ({ product, onLike }) => {
       {/* "Discount" Badge */}
       {
         product.discount && (
-          <div className="absolute z-10 right-0 top-0 h-12 w-12 rounded-full flex items-center justify-center bg-red-500 m-4">
+          <div className="absolute z-10 right-0 top-0 h-12 w-12 rounded-full flex items-center justify-center bg-[#E97171] m-4">
         {product.discount}%
+      </div>
+        )}
+      {/* "newTag" Badge */}
+      {
+        product.newTag===true && (
+          <div className="absolute z-10 right-0 top-0 h-12 w-12 rounded-full flex items-center justify-center bg-[#2EC1AC] m-4">
+        New
       </div>
         )}
       
@@ -77,19 +84,19 @@ const ProductCard = ({ product, onLike }) => {
       <img
         src={product.image}
         alt={product.title}
-        className="w-full h-56 object-cover rounded-md mb-5"
+        className="w-full h-56 object-cover"
       />
 
       {/* Product Details */}
-      <div className="px-2 flex flex-col gap-2">
+      <div className="px-2 flex flex-col gap-3 bg-blue-50 pt-10 ">
         <h2 className="text-xl font-semibold">{product.title}</h2>
         <p className="text-gray-600 leading-none">
           {truncateText(product?.subtitle, 100)}
         </p>
         <div className="flex items-center gap-4 mb-6">
-          <p className="font-bold text-lg">${product.price}</p>
+          <p className="font-bold text-lg">Rp.{product.price}</p>
           {product.oldPrice && (
-            <p className="text-lg line-through">${product.oldPrice}</p>
+            <p className="text-lg line-through">Rp.{product.oldPrice}</p>
           )}
         </div>
       </div>
@@ -104,6 +111,7 @@ ProductCard.propTypes = {
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     price: PropTypes.number.isRequired,
+    newTag: PropTypes.bool,
     discount: PropTypes.number,
     oldPrice: PropTypes.number,
   }).isRequired,

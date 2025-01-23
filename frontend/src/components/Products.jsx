@@ -6,7 +6,19 @@ import singleIcon from '../../public/singleView.svg';
 import ProductCard from "./ProductCard";
 const BASE_URL = "https://fog-assignment-bo1o.onrender.com/"
 
-function Filter({ showCount, setShowCount, sortOption, setSortOption, setFilterVisible, filterVisible, setPriceRange, setBrandFilter, setCategoryFilter }) {
+function Filter({ 
+  showCount, 
+  setShowCount, 
+  sortOption, 
+  setSortOption, 
+  setFilterVisible, 
+  filterVisible, 
+  setPriceRange, 
+  setBrandFilter, 
+  setCategoryFilter,
+  viewMode,
+  setViewMode 
+}) {
   const filterButtonRef = useRef(null);
   const dropdownRef = useRef(null);
   const [dropdownPosition, setDropdownPosition] = useState({ top: "0px", left: "0px" });
@@ -63,26 +75,34 @@ function Filter({ showCount, setShowCount, sortOption, setSortOption, setFilterV
           <img src={filterIcon} alt="" />
           <span className="ml-1">Filter</span>
         </button>
-        <button>
+        <div className="flex gap-4">
+        <button onClick={() => setViewMode('grid')}>
           <img src={gridIcon} alt="gridIcon" />
         </button>
-        <button>
+        <button onClick={() => setViewMode('single')}>
           <img src={singleIcon} alt="singleIcon" />
         </button>
-
         <span className="text-gray-600 border-l-2 border-gray-600 py-1 px-4">Showing 1-{showCount} results</span>
+        </div>
+        
+
+        
+      </div>
+
+      <div>
+        <button className="py-2 px-6 bg-white font-semibold text-secondary">Add Products</button>
       </div>
 
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-1">
           <span className="text-gray-600">Show</span>
           <input
-  type="number"
-  className="w-10 flex items-center justify-center text-center"
-  value={showCount}
-  onChange={(e) => setShowCount(e.target.value)}
-  onKeyDown={(e) =>  setShowCount(e.target.value)}
-/>
+            type="number"
+            className="w-10 flex items-center justify-center text-center"
+            value={showCount}
+            onChange={(e) => setShowCount(e.target.value)}
+            onKeyDown={(e) =>  setShowCount(e.target.value)}
+          />
         </div>
 
         <div className="flex items-center space-x-1">
@@ -164,6 +184,7 @@ function Filter({ showCount, setShowCount, sortOption, setSortOption, setFilterV
     </div>
   );
 }
+// [Previous Filter component remains the same]
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -175,11 +196,10 @@ function Products() {
   const [priceRange, setPriceRange] = useState({ minPrice: "", maxPrice: "" });
   const [brandFilter, setBrandFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
-  const productsPerPage = showCount;
-
-  const getProductsFromBackend = async() =>{
-    try
-    {
+  const [viewMode, setViewMode] = useState('grid');
+  
+  const getProductsFromBackend = async() => {
+    try {
       const response = await fetch("https://fog-assignment-bo1o.onrender.com/api/products/", {
         method: "GET",
         headers: {
@@ -192,46 +212,56 @@ function Products() {
       }
   
       const data = await response.json();
-      console.log("Fetched product data:", data);
       setProducts(data);
-
-    }catch(err)
-    {
+    } catch(err) {
       console.log("Error in fetching product data : ", err);
     }
   }
 
-
-
   useEffect(() => {
-
     getProductsFromBackend();
-    // setProducts(productsData);
     setLoading(false);
   }, []);
 
+  useEffect(() => {
+    // Adjust showCount based on view mode
+    setShowCount(viewMode === 'grid' ? 16 : 8);
+  }, [viewMode]);
+
+  // Robust filtering with fallback for empty inputs
   const filteredProducts = products.filter((product) => {
-    const minPrice = parseFloat(priceRange.minPrice) || 0;
-    const maxPrice = parseFloat(priceRange.maxPrice) || Infinity;
+    // Handle price range
+    const minPrice = priceRange.minPrice !== "" ? parseFloat(priceRange.minPrice) : 0;
+    const maxPrice = priceRange.maxPrice !== "" ? parseFloat(priceRange.maxPrice) : Infinity;
+
+    // Robust input matching
+    const matchesBrand = !brandFilter || 
+      product.brand.toLowerCase().includes(brandFilter.toLowerCase().trim());
+    
+    const matchesCategory = !categoryFilter || 
+      product.category.toLowerCase().includes(categoryFilter.toLowerCase().trim());
 
     return (
       product.price >= minPrice &&
       product.price <= maxPrice &&
-      (brandFilter ? product.brand.toLowerCase().includes(brandFilter.toLowerCase()) : true) &&
-      (categoryFilter ? product.category.toLowerCase().includes(categoryFilter.toLowerCase()) : true)
+      matchesBrand &&
+      matchesCategory
     );
   });
 
+  // Validate and sanitize show count
+  const sanitizedShowCount = Math.max(1, parseInt(showCount) || 16);
+
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (sortOption === "Price: Low to High") {
-      return a.price - b.price; // Sort by price: low to high
+      return a.price - b.price;
     }
 
     if (sortOption === "Price: High to Low") {
-      return b.price - a.price; // Sort by price: high to low
+      return b.price - a.price;
     }
 
-    return 0; // Default sorting (no change in order)
+    return 0;
   });
 
   if (loading) {
@@ -242,6 +272,7 @@ function Products() {
     );
   }
 
+  const productsPerPage = sanitizedShowCount;
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = sortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
@@ -251,7 +282,6 @@ function Products() {
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
-
   return (
     <>
       <Filter
@@ -264,41 +294,46 @@ function Products() {
         setPriceRange={setPriceRange}
         setBrandFilter={setBrandFilter}
         setCategoryFilter={setCategoryFilter}
+        viewMode={viewMode}
+        setViewMode={setViewMode}
       />
       <div className="container mx-auto px-4 py-10">
         <h1 className="text-4xl font-bold text-center mb-12 text-gray-800">Featured Products</h1>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <div className={`grid ${
+          viewMode === 'grid' 
+            ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' 
+            : 'grid-cols-1 md:grid-cols-2'
+        } gap-8`}>
           {currentProducts.map((product) => (
             <ProductCard key={product?.title} product={product} />
           ))}
         </div>
 
         <div className="flex justify-center items-center mt-8 gap-6">
-  {Array.from({ length: totalPages }, (_, index) => (
-    <button
-      key={index + 1}
-      onClick={() => handlePageChange(index + 1)}
-      className={`mx-1 px-4 py-2 rounded ${
-        currentPage === index + 1
-          ? "bg-[#b88e2f] text-white"
-          : "bg-gray-200 text-gray-800"
-      }`}
-    >
-      {index + 1}
-    </button>
-  ))}
-  
-  {/* Next button */}
-  {currentPage < totalPages && (
-    <button
-      onClick={() => handlePageChange(currentPage + 1)}
-      className="mx-1 px-4 py-2 rounded bg-gray-200 text-gray-800"
-    >
-      Next
-    </button>
-  )}
-</div>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index + 1}
+              onClick={() => handlePageChange(index + 1)}
+              className={`mx-1 px-4 py-2 rounded ${
+                currentPage === index + 1
+                  ? "bg-[#b88e2f] text-white"
+                  : "bg-gray-200 text-gray-800"
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+          
+          {currentPage < totalPages && (
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              className="mx-1 px-4 py-2 rounded bg-gray-200 text-gray-800"
+            >
+              Next
+            </button>
+          )}
+        </div>
       </div>
     </>
   );
