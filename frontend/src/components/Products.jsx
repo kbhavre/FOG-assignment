@@ -4,6 +4,7 @@ import filterIcon from '../../public/filterIcon.svg';
 import gridIcon from '../../public/gridView.svg';
 import singleIcon from '../../public/singleView.svg';
 import ProductCard from "./ProductCard";
+const BASE_URL = "https://fog-assignment-bo1o.onrender.com/"
 
 function Filter({ showCount, setShowCount, sortOption, setSortOption, setFilterVisible, filterVisible, setPriceRange, setBrandFilter, setCategoryFilter }) {
   const filterButtonRef = useRef(null);
@@ -179,7 +180,7 @@ function Products() {
   const getProductsFromBackend = async() =>{
     try
     {
-      const response = await fetch("http://localhost:3000/api/products/", {
+      const response = await fetch("https://fog-assignment-bo1o.onrender.com/api/products/", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
