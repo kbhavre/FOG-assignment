@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const corsOptions = {
-  origin: 'http://localhost:5173', // Explicitly allow the client origin
+  origin: '*', // Explicitly allow the client origin
   credentials: true, // Allow credentials (cookies, headers, etc.)
 };
 const dotenv = require('dotenv');
