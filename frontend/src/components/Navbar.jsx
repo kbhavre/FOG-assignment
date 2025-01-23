@@ -21,7 +21,7 @@ const ResponsiveMenu = ({open}) =>{
                         transition= {{duration: 0.3,}}
                         className='absolute top-20 left-0 w-full h-screen z-20'
                      >
-                        <div className='text-xl font-semibold uppercase bg-red-500 text-white py-10 m-6 rounded-3xl'>
+                        <div className='text-xl font-semibold uppercase text-white py-10 m-6 rounded-3xl'>
                             <ul className='flex flex-col justify-center items-center gap-10 '>
                                 <li>Home</li>
                                 <li>About</li>
@@ -67,16 +67,16 @@ const Navbar = () => {
 
             {/* Icons Section */}
             <div className='flex items-center sm:-space-x-2 md:gap-4 '>
-            <button className="text-2xl hover:bg-black hover:text-white rounded-full p-2 duration-200 ">
+            <button className="text-2xl hover:bg-secondary hover:text-white rounded-full p-2 duration-200 ">
                 <TbUserExclamation />
                 </button>
-                <button className="text-2xl hover:bg-black hover:text-white rounded-full p-2 duration-200 ">
+                <button className="text-2xl hover:bg-secondary hover:text-white rounded-full p-2 duration-200 ">
                     <CiSearch />
                 </button>
-                <button className='text-2xl hover:bg-black hover:text-white rounded-full p-2 duration-200'>
+                <button className='text-2xl hover:bg-secondary hover:text-white rounded-full p-2 duration-200'>
                     <CiHeart/>
                 </button>
-                <button className="text-2xl hover:bg-black hover:text-white rounded-full p-2 duration-200 ">
+                <button className="text-2xl hover:bg-secondary hover:text-white rounded-full p-2 duration-200 ">
                     <PiShoppingCartThin />
                 </button>
                 
